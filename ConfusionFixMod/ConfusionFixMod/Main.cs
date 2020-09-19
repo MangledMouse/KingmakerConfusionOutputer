@@ -87,6 +87,11 @@ namespace ConfusionFixMod
             }
         }
 
+        //to avoid transpiler issues
+        //we can write a postfix for the UnitPartConfusion State with this syntax
+        //[HarmonyPatch(typeof(UnitPartConfusion), "State", MethodType.Setter)]
+        //Then grab the __instance of the UnitPartConfusion and output to the battlelog on a switch of the ConfusionState State
+
         [HarmonyPatch(typeof(UnitConfusionController), "TickOnUnit")]
         static class UnitConfusionController_TickOnUnit_Patch
         {
@@ -140,15 +145,18 @@ namespace ConfusionFixMod
             }
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                var retainControl = AccessTools.Method(typeof(UnitPartConfusion), "RetainControl");
+                var setCmd = AccessTools.Property(typeof(UnitPartConfusion), "Cmd").SetMethod;
                 var getState = AccessTools.Property(typeof(UnitPartConfusion), "State").GetMethod;
                 var logState = AccessTools.Method(typeof(UnitConfusionController_TickOnUnit_Patch), "LogState");
                 var codes = instructions.ToList();
-                var index = Find(codes,
-                        new CodeInstruction(OpCodes.Ldloc_1),
-                        new CodeInstruction(OpCodes.Callvirt, getState),
-                        new CodeInstruction(OpCodes.Brtrue)
-                    );
+                var findingCodes = new CodeInstruction[]
+                {
+                    new CodeInstruction(OpCodes.Ldloc_1),
+                    new CodeInstruction(OpCodes.Ldnull),
+                    new CodeInstruction(OpCodes.Callvirt, setCmd)
+                };
+                var index = Find(codes, findingCodes);
+                index += findingCodes.Length; //Insert after
                 for (int i = 0; i < codes.Count; i++)
                 {
                     if (index == i)
