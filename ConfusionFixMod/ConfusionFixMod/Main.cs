@@ -147,7 +147,7 @@ namespace ConfusionFixMod
                 var index = Find(codes,
                         new CodeInstruction(OpCodes.Ldloc_1),
                         new CodeInstruction(OpCodes.Callvirt, getState),
-                        new CodeInstruction(OpCodes.Brtrue_S)
+                        new CodeInstruction(OpCodes.Brtrue)
                     );
                 for (int i = 0; i < codes.Count; i++)
                 {
