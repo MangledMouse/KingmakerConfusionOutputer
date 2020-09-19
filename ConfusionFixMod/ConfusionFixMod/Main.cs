@@ -14,10 +14,8 @@ using Kingmaker.Blueprints.Items;
 using System.IO;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.EntitySystem.Entities;
-using TurnBased.Utility;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Parts;
-using TurnBased.Controllers;
 using UnityEngine;
 using Kingmaker.Blueprints.Root.Strings.GameLog;
 using Kingmaker.UI.Log;
@@ -143,7 +141,7 @@ namespace ConfusionFixMod
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 var retainControl = AccessTools.Method(typeof(UnitPartConfusion), "RetainControl");
-                var getState = AccessTools.Property(typeof(UnitPartConfusion), "GetState").GetMethod;
+                var getState = AccessTools.Property(typeof(UnitPartConfusion), "State").GetMethod;
                 var logState = AccessTools.Method(typeof(UnitConfusionController_TickOnUnit_Patch), "LogState");
                 var codes = instructions.ToList();
                 var index = Find(codes,
